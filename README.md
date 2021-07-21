@@ -40,6 +40,7 @@ Password = SecureStringGeneratedPassword
 _NOTE: This script needs to be executed standalone only for testing purposes.
 
 `UsingSchedulerScript.ps1`
+* The script `User`and `password` field needs to be modified with login credentials.
 * Once this script is executed, an automated task will be added to the task scheduler.
 * This script is designied to executed the the service status alert.
 * This task will execute immediately at 01:30 Once a day every 30 minutes.
