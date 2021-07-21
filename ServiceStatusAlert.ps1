@@ -1,14 +1,10 @@
-## When this script is run, it iterates through the list of services which are set to automatic but currently not
-## in a running state. Then it attempts to email the list of not running services to a given notification emai.
-##
-## TODO
-## Error handling
-## Transfer the script to Git Repro
-
+# When this script is executed, it iterates through the list of services which are set to automatic but currently not
+# in a running state. Then it attempts to email the list of not running services to a given notification emai.
 # List of services set to auto-start, which are not in a running state
 
 # To bypass the secuity policy when testing locally.
-Set-ExecutionPolicy Bypass
+# In production environment Restricted will be the default setting.
+Set-ExecutionPolicy -scope CurrentUser Remotesigned
 
 # To fetch the stopped servies which are set to Autostart.
 function Get-StoppedServices {
@@ -17,11 +13,13 @@ function Get-StoppedServices {
 
 # Configure and send output over email to the recipient.
 function Send-Email($ServiceStatus) {
-	$emailusername = "xxx@gmail.com"
-	$encrypted = Get-Content C:\Users\User\Desktop\Common.txt | ConvertTo-SecureString
-	$credential = New-Object System.Management.Automation.PsCredential($emailusername, $encrypted)
-	$FromAddress = "xxx@gmail.com"
-	$ToAddress = "xxx@outlook.com" # This email address can be changed to alerts@mydomain.com.
+	# Get the credentials from the config.ini file.
+	$Cred = Get-Content C:\Scripts\config.ini | Select -Skip 1 | ConvertFrom-StringData
+	$encrypted = $Cred.Password | ConvertTo-SecureString
+	$credential = New-Object System.Management.Automation.PsCredential($Cred.Username, $encrypted)
+	# Configure SMTP client
+	$FromAddress = "nikhilsugathan4444@gmail.com"
+	$ToAddress = "nikhilsugathan@outlook.com" # This email address can be changed to alerts@mydomain.com.
 	$MessageSubject = "Service Stopped"
 	$MessageBody = "The below service(s) stopped running, please investigate immediately"
 	$MessageBody = $MessageBody + $ServiceStatus
